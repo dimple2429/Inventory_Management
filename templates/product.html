@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Products{% endblock %}
+
+{% block content %}
+<div class="container p-sm">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+       {%if messages %}
+            {%for category, message in messages %}
+              <div class="alert alert-{{ category }}">
+                 <h4 style="text-align:center; font-size: smaller;">{{ message }}</h4>
+              </div>
+            {%endfor%}
+      {%endif %}
+    {%endwith%}
+<div class="container text-align:center mb-1" >  
+    <div class="row">
+        <div class="col-sm">
+            <div class="jumbotron bg-light p-sm">
+            <h4 class="mb-2 font-weight-italic">Products 
+                <button type="button"  class="btn  float-right text-white font-weight-bold" style="background-color: #633974;"
+                data-toggle="modal" data-target="#addNewProduct">+ ADD PRODUCT</button></h4><hr>
+<!-- add modal -->
+<div class="modal fade" id="addNewProduct">
+  <form action="{{ url_for('product') }}" method="POST">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #633974;" >
+        <h5 style="text-align: center " class="modal-title font-weight-italic text-white">Add New Product :</h5>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="form-group">
+          <label class="font-weight-italic"> Enter Product Name : </label>
+          <br>
+          <input type="text" name="product_name" class = "form-control" id="product_name" required autocomplete="on" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+          <input type="submit" value="Add" class="btn-success">
+          <button class=" btn-danger" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</form>
+</div>
+{% if products %}
+<table>
+    <table class="table table-background-color: #4A235A table-bordered  mb-1" style="background-color: #FDEDEC;">
+        <thead class = "text-white" style="background-color:  #633974;">
+         <tr>
+           <th>ID</th>
+           <th>Product Name</th>
+           <th>Product Quantity</th>
+           <th>Update</th>
+         </tr>
+        </thead>
+        <tbody>
+          {% for product in products %}
+            <tr>
+              <th>{{ loop.index }}</th>
+              <td>{{ product.product_name }}</td>
+              {% if product.product_quantity == 0 %}
+              <td>---</td>
+              {% else %}
+              <td>{{ product.product_quantity }}</td>
+              {% endif %}              
+              <td>
+                <button type="button" class="btn btn-edit btn-sm" data-toggle="modal" data-target = "#edit{{ product.id }}">Edit</button>
+                  <!-- edit modal -->
+                  <div class="modal fade" id="edit{{ product.id }}">
+                    <form action="{{ url_for('product') }}" method="POST">
+                    <div class="modal-dialog">
+                      <div class="modal-content">
+                        <div class="modal-header " style="background-color: #633974;">
+                          <h5 style="text-align: center" class="modal-title font-weight-italic text-white">Edit Product :</h5>
+                        </div>
+                        <div class="modal-body bg-light">
+                          <div class="form-group">
+                            <input type="hidden" name="edit_product" value="{{ product.id }}">
+                            <label class="font-weight-italic"> Enter Product Name : </label>
+                            <input type="text" name="product_edit"  class = "form-control" value="{{ product.product_name }}" required autocomplete="on">
+                          </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" value="Update" class="btn-success">
+                            <button class=" btn-danger" type="button" data-dismiss="modal">Cancel</button>
+                          </div>
+                      </div>
+                    </div>
+                  </form>
+                  </div>
+ 
+                <a href="{{ url_for('delete', product_id = product.id,type ='product') }}">
+              <button type="button" class="btn btn-delete btn-sm" name=>Delete</button></a>
+            </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+</table> 
+{% else %}
+<div class="text-center mt-5">
+  <h4>To Display Products, Add Now!</h4>
+</div>
+{% endif %}
+
+{% endblock %}

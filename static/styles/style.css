@@ -1,0 +1,32 @@
+/* #example{
+    background-size: cover;
+    margin: 0;
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('static/images/"back.jpg"');
+} */
+
+
+.item-link, item-link:hover{
+    color: black;
+    cursor: unset;
+    text-decoration: none !important;
+}
+
+.btn-edit  {
+    padding-top: 0;
+    padding-bottom: 0;
+    background-color: #5cb85c;
+    color: white;
+    font-size: 14px;
+
+}
+
+.btn-delete {
+     padding-top: 0;
+     padding-bottom: 0;
+     background-color: #d9534f;
+     color: white;
+     font-size: 14px;
+    }

@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+{% block title %}Product Movements{% endblock %}
+
+{% block content %}
+<div class="container p-sm">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+     {%if messages %}
+          {%for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+               <h4 style="text-align:center; font-size: smaller;">{{ message }}</h4>
+            </div>
+          {%endfor%}
+    {%endif %}
+    {{ message }}
+  {%endwith%}
+</div>
+<div class="container text-align:center mb-1" >  
+    <div class="row">
+        <div class="col-sm">
+            <div class="jumbotron bg-light p-sm">
+            <h4 class="mb-2 font-weight-italic">Products Movements
+              
+
+                <button type="button1" class="btn float-right text-white font-weight-bold mb-5" style="background-color: #5cb85c; margin-right: 5px;" 
+                data-toggle="modal" data-target = "#editMovement" >Edit Movement</button>
+
+                <button type="button"  class="btn float-right text-white font-weight-bold"  style="background-color: #633974; margin-right: 5px;"
+                data-toggle="modal" data-target="#addNewMovement">+ MOVE PRODUCT</button>
+            </h4>
+            <hr>
+                  
+                <!-- add-modal -->
+<div class="modal fade" id="addNewMovement">
+  <form action="{{ url_for('movement') }}" method="POST">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header"  style="background-color: #633974;">
+        <h5 style="text-align: center" class="modal-title font-weight-italic text-white">Add Product Movement :</h5>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="form-group">
+          <p> <label for="product" style="width: 100%;">Select Product Name :</label>
+            <br>
+            <input type="hidden" name="product_id">
+
+            <select class=" custom-select my-1 mr-sm-2 " name="product_name" style="width : 100%" >
+              <option value='Select Product Name'>Select product Name</option>
+              {% for product in products %}
+                    <option value="{{ product.product_name }}">{{ product.product_name }}</option>
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="location">Select Location From :</label>
+            <br>
+            <select class="custom-select my-1 mr-sm-2" name="location_from" style="width : 100%">
+              <option value='Select Location From'>Select Location From</option>
+              {% for location in locations %}
+                    <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="location">Select Location To :</label>
+            <br>
+            <select class="custom-select my-1 mr-sm-2" name="location_to" style="width : 100%">
+              <option value='Select Location To'>Select Location To</option>
+              {% for location in locations %}
+                    <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="quantity">Select Quantity :</label>
+            <br>
+            <input type="number" class="form-control" name="product_quantity"
+                 placeholder=" Enter Product Quantity" id="product_quantity" required>
+          </div>
+           </p>
+        </div>
+      
+      <div class="modal-footer">
+          <input type="submit" value="Submit" class="btn-success">
+          <button class=" btn-danger" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</form>
+</div>
+{% if movements %}
+<table>
+  <table class="table table-background-color: #4A235A table-bordered  mb-1" style="background-color: #FDEDEC;">
+    <thead class = "text-white" style="background-color:  #633974;">
+
+         <tr>
+           <th>ID</th>
+           <th>Product</th>
+           <th>From</th>
+           <th>To</th>
+           <th>Quantity</th>
+           <th>Date</th>
+           <th>Update</th>
+         </tr>
+        </thead>
+        <tbody>
+          {% for movement in movements|reverse  %}
+            <tr>
+              <td>{{ loop.index }}</td>
+              <td>{{ movement.product_name }}</td>
+              {% if movement.location_from  == "Select Location From" %}
+              <td>---</td>
+              {% else %}
+              <td>{{ movement.location_from }}</td>
+              {% endif %}
+              {% if movement.location_to  == "Select Location To" %}
+              <td>---</td>
+              {% else %}
+              <td>{{ movement.location_to }}</td>
+              {% endif %}
+              <td>{{ movement.product_quantity }}</td>
+              <td>{{ movement.timestamp.date() }}</td>
+              <td>
+                <!-- <button type="button" class="btn btn-edit" data-toggle="modal" data-target = "#edit{{movement.movement_id}}" >
+                  Edit</button> -->
+<!-- edit-modal -->
+<div class="modal fade" id="editMovement">
+  <form action="{{ url_for('movement') }}" method="POST">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background-color: #633974;">
+        <h5 style="text-align: center" class="modal-title font-weight-italic text-white">Edit Product Movement :</h5>
+      </div>
+      <div class="modal-body bg-light">
+        <div class="form-group">
+          <p> <label for="product" style="width: 100%;">Select Product Name :</label>
+            <br>
+            <input type="hidden" name="edit_movement" value="{{ movement.movement_id }}">
+            <select class=" custom-select my-1 mr-sm-2 " name="product_name" style="width : 100%" disabled>
+              <option value='Select Product Name'>Select product Name</option>
+              {% for product in products %}
+                {% if product.product_name == movement.product_name %}
+
+                    <option value="{{ product.product_name }}" selected>{{ product.product_name }}</option>
+                {% endif %}
+                <option value="{{ product.product_name }}">{{ product.product_name }}</option>
+
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="location">Select Location From :</label>
+            <br>
+            <select class="custom-select my-1 mr-sm-2" name="location_from" style="width : 100%" disabled>
+              <option value='Select Location From'>Select Location From</option>
+              {% for location in locations %}
+                {% if location.location_name == movement.location_from %}
+    
+                    <option value="{{ location.location_name }}" selected>{{ location.location_name }}</option>
+                {% endif %}
+                <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+    
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="location">Select Location To :</label>
+            <br>
+            <select class="custom-select my-1 mr-sm-2" name="location_to" style="width : 100%" disabled>
+              <option value='Select Location To'>Select Location To</option>
+              {% for location in locations %}
+                {% if location.location_name == movement.location_to %}
+
+                    <option value="{{ location.location_name }}" selected>{{ location.location_name }}</option>
+                {% endif %}
+                <option value="{{ location.location_name }}">{{ location.location_name }}</option>
+    
+              {% endfor %}
+            </select>
+           </p>
+        </div>
+        <div class="form-group">
+          <p> <label for="quantity">Select Quantity :</label>
+            <br>
+            <input type="number" class="form-control" name="product_quantity"
+                 placeholder=" Enter Product Quantity" value= "{{ movement.product_quantity}}" id="product_quantity"  required>
+          </div>
+           </p>
+        </div>
+      
+      <div class="modal-footer">
+          <input type="submit" value="Submit" class="btn-success">
+          <button class=" btn-danger" type="button" data-dismiss="modal">Cancel</button>
+        </div>
+    </div>
+  </div>
+</form>
+</div>
+<a href="{{ url_for('delete', movement_id = movement.movement_id,type ='movement') }}">
+  <button type="button" class="btn btn-delete btn-sm">Delete</button></a>
+</td>
+</tr>
+          {% endfor %}
+        </tbody>
+    </table> 
+    {% else %}
+    <div class="text-center mt-5">
+      <h4 style="align-items: center;">To Display Products Movements, Move Now!</h4>
+    </div>
+    {% endif %}
+{% endblock %}
