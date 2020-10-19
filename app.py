@@ -142,7 +142,6 @@ def movement():
                             flash(f"Exceeds Quantity, Cannot be Updated!", "danger")
             if edit_valid:
                 movement.product_quantity = new_qty
-                db.session.commit()
                 flash(f"Movement Updated Successfully!", "success")
 
         
@@ -155,8 +154,8 @@ def movement():
             
             if location_from != "Select Location From" or location_to != "Select Location To":
                 if location_from == location_to:
-                    flash(f"Location cannot be same","danger")
                     valid = False
+                    flash(f"Location cannot be same","danger")
                 
             else:
                 flash(f"Location not Selected, Select atleast Once!","danger")
@@ -179,7 +178,8 @@ def movement():
                         elif int(product_quantity) > total_items:
                             flash(f"Quantity cannot be greater than available!" ,"danger")
                             valid = False
-                        elif int(product_quantity) <= total_items:
+                        elif location_from != location_to: 
+                            int(product_quantity) == total_items
                             valid = True
 
 
@@ -301,11 +301,6 @@ def get_location():
         data['product_list'] = prod_list
         loc_data.append(data)
     return loc_data
-
-
-
-
-
 
 @app.route("/delete")
 def delete():
